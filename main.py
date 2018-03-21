@@ -79,7 +79,7 @@ for line in file:
         #print line#DEBUG
         stringTree += line
     else:
-        #print stringTree #DEBUG
+        #print(stringTree)#DEBUG
         exploreTree(parse_tree(stringTree)[0])
         stringTree = ""
                 
