@@ -12,10 +12,10 @@ import sys
 reload(sys)  
 sys.setdefaultencoding('utf8')
 
-devfile = "test-listnet-dev.txt"
-trainfile = "test-listnet-train.txt"
-testfile = "test-listnet-test.txt"
-learnfile = trainfile
+devfile = "test-listnet-dev-it.txt"
+trainfile = "test-listnet-train-it.txt"
+testfile = "test-listnet-test-it.txt"
+learnfile = testfile
 
 globalInteger = 1;
 
@@ -44,7 +44,10 @@ def wordDomain201(nodeList):
     for node in nodeList:
         out = out + str (node.get('groupId')) + ','
         out = out + PoS2HVRPoS.get(node.get('uPoS'))  + "," 
-        out = out + dep2HVRdep.get(node.get('depRel'))  + ","
+        if(dep2HVRdep.has_key(node.get('depRel'))):
+            out = out + dep2HVRdep.get(node.get('depRel'))  + ","
+        else:
+            out = out + dep2HVRdep.get('obj')  + ","#DEBUG: workaround for dep which are not in the train
         if node.get('isHead'):
             out = out + "1,"
         else:
@@ -53,7 +56,8 @@ def wordDomain201(nodeList):
     return out
             
 #read the PoSs in the train file and convert into a hot-vector representation by using a dictionary
-f = os.popen("cut  -f 4 " + learnfile + " | sort | uniq")
+#f = os.popen("cut  -f 4 " + trainfile + " " +testfile + " | sort | uniq")
+f = os.popen("cut  -f 4 " + trainfile + " | sort | uniq")
 PoSList = filter(None,f.read().split("\n"))
 #print PoSList #DEBUG
 PoS2HVRPoS = {}
@@ -62,7 +66,8 @@ for PoS,i in zip (PoSList,range(len(PoSList)) ):
 #print 'AUX=',PoS2HVRPoS['AUX'] #DEBUG
 
 #read the deps the train file and convert into a hot-vector representation by using a dictionary
-f = os.popen("cut  -f 8 " + learnfile + " | sort | uniq")
+#f = os.popen("cut  -f 8 " + trainfile + " " + testfile + " | sort | uniq")
+f = os.popen("cut  -f 8 " + trainfile + " | sort | uniq")
 depList = filter(None,f.read().split("\n"))
 #print depList #DEBUG
 dep2HVRdep = {}
