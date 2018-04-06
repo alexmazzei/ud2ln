@@ -10,17 +10,24 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 
-testfile = "test-listnet-test-it.txt" #test-02.conll"#
-HVRPredFile = "it-test-HVR-PoSDeP.txt.pred"
+testfile = "test-listnet-test-it.txt"#"test-02.conll"#
+#HVRPredFile = "it-test-HVR-PoSDeP.txt.pred"
+#HVRPredFile = "ud-it-test-UXMDEP-H1V.txt.pred"
+#HVRPredFile = "ud-it-test-WEUXMDEP-H1V.txt.pred"
+HVRPredFile = "ud-it-test-WELUXMDEP-H1V.txt.pred"
+
+#HVRPredFile = "tmp.txt"
+
 fileHVRPredFile = open(HVRPredFile)
 
 def augmentTree(tn):
+    #tn.children.sort(key = lambda x : x.data["id"])
     if(tn.children):
         i = 0
         while ((i < len(tn.children)) and (tn.children[i].data.get("id") < tn.data.get("id")) ):
             tn.children[i].data["predictedIslandPosition"] = int(fileHVRPredFile.readline())
             i+=1
-        tn.data["predictedIslandPosition"] = int(fileHVRPredFile.readline())
+        tn.data["predictedIslandPositionH"] = int(fileHVRPredFile.readline())
         while (i < len(tn.children)):
             tn.children[i].data["predictedIslandPosition"] = int(fileHVRPredFile.readline())
             i+=1
@@ -33,7 +40,7 @@ def visitNewPositionTree(tn):
         print(tn.data.get("form") +"-"+ str(tn.data.get("predictedIslandPosition"))+"-"+str(tn.data.get("id")))
     else:
         i = 0
-        while ((i < len(tn.children)) and (tn.children[i].data.get("predictedIslandPosition") < tn.data.get("predictedIslandPosition"))):
+        while ((i < len(tn.children)) and (tn.children[i].data.get("predictedIslandPosition") < tn.data.get("predictedIslandPositionH"))):
             visitNewPositionTree(tn.children[i])
             i+=1
         print(tn.data.get("form")+"-"+ str(tn.data.get("predictedIslandPosition"))+"-"+str(tn.data.get("id")))
